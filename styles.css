@@ -54,12 +54,15 @@ input[type=date]{min-width:0;max-width:100%;width:100%;-webkit-appearance:none;a
 .helpText{margin:-2px 0 6px;color:var(--muted);font-size:10px}
 .tasteRow{display:grid;grid-template-columns:42px 1fr;align-items:center;gap:5px;margin-top:4px}
 .tasteName{font-size:11.5px;font-weight:700}.tasteChoices{display:grid;grid-template-columns:repeat(5,1fr);gap:3px}
-.tasteChoice{min-height:34px;padding:2px;border:1px solid var(--line);border-radius:9px;background:#fffdfa;color:#6b5142;font-size:8.6px;line-height:1.1}
+.tasteChoice{min-height:34px;padding:2px;border:1px solid var(--line);border-radius:9px;background:#fffdfa;color:#6b5142;font-size:10.5px;line-height:1.08}
 .tasteChoice.active{border-color:#8b6345;background:#8d6749;color:#fff}
 
-.starRating{display:flex;gap:5px}.starRating button{flex:1;min-height:38px;border:1px solid var(--line);border-radius:10px;background:#fffdfa;color:#c7b39f;font-size:21px;line-height:1}
+/* 総合評価は日付と同じ1行レイアウト */
+#brewForm>.card:has(#overallRating){display:grid;grid-template-columns:58px minmax(0,1fr);align-items:center;gap:8px}
+#brewForm>.card:has(#overallRating) .plainTitle{margin:0}
+.starRating{display:flex;min-width:0;gap:5px}.starRating button{flex:1;min-width:0;min-height:38px;border:1px solid var(--line);border-radius:10px;background:#fffdfa;color:#c7b39f;font-size:21px;line-height:1}
 .starRating button.active{background:#f4e6d8;color:#744928;border-color:#a67b58}
-.memo{resize:vertical;min-height:68px}
+.memo{height:50px;min-height:50px;max-height:120px;resize:vertical}
 .wantAgain{display:flex;align-items:center;gap:8px;margin-top:7px;font-size:12.5px;font-weight:700;cursor:pointer}.wantAgain input{position:absolute;opacity:0}
 .checkBox{display:grid;place-items:center;width:22px;height:22px;border:1px solid #a48771;border-radius:6px;background:#fffdfa}.wantAgain input:checked+.checkBox{background:#825d40;border-color:#825d40}.wantAgain input:checked+.checkBox:after{content:'✓';color:#fff;font-weight:800}
 .formActions{display:flex;gap:7px;margin-top:7px}.saveBtn,.secondaryBtn{min-height:42px;border-radius:12px;font-size:13px;font-weight:800}
@@ -87,8 +90,9 @@ input[type=date]{min-width:0;max-width:100%;width:100%;-webkit-appearance:none;a
   .textInput,select{min-height:36px;padding:6px 9px;border-radius:10px}
   .choice{min-height:34px;font-size:11px;border-radius:10px}
   .splitCard{gap:5px}.stepperBlock+.stepperBlock{padding-left:7px}.stepper{grid-template-columns:32px minmax(0,1fr) 32px}.stepper button{width:32px;height:32px}.stepper strong{font-size:23px}
-  .tasteRow{grid-template-columns:40px 1fr;gap:4px;margin-top:3px}.tasteChoices{gap:2px}.tasteChoice{min-height:32px;font-size:8.2px}
-  .starRating button{min-height:36px;font-size:20px}.memo{min-height:64px}.wantAgain{margin-top:6px}
+  .tasteRow{grid-template-columns:40px 1fr;gap:4px;margin-top:3px}.tasteChoices{gap:2px}.tasteChoice{min-height:32px;font-size:10px}
+  #brewForm>.card:has(#overallRating){grid-template-columns:52px minmax(0,1fr);gap:6px}
+  .starRating button{min-height:36px;font-size:20px}.memo{height:46px;min-height:46px}.wantAgain{margin-top:6px}
   .saveBtn,.secondaryBtn{min-height:40px}
   .brandFooter{margin-top:6px}
 }
@@ -96,4 +100,5 @@ input[type=date]{min-width:0;max-width:100%;width:100%;-webkit-appearance:none;a
   .choiceGrid.four{grid-template-columns:repeat(2,1fr)}
   .splitCard{grid-template-columns:1fr}.stepperBlock+.stepperBlock{border-left:0;border-top:1px solid rgba(86,50,31,.09);padding:8px 0 0}
   .tasteRow{grid-template-columns:1fr}.tasteName{margin-bottom:-1px}.filterGrid{grid-template-columns:1fr}.tasteSummary{grid-template-columns:repeat(2,1fr)}
+  #brewForm>.card:has(#overallRating){grid-template-columns:52px minmax(0,1fr)}
 }
