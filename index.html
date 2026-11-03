@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#ead8c4">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Brew Log">
+  <title>Brew Log</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./assets/app-icon-192.png">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="appShell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">ハンドドリップガイド</p>
+        <h1>Brew Log</h1>
+      </div>
+      <div class="topIcon" aria-hidden="true"><img src="./assets/icon-taste.webp" alt=""></div>
+    </header>
+
+    <nav class="tabs" aria-label="画面切替">
+      <button class="tab active" type="button" data-view="form">記録する</button>
+      <button class="tab" type="button" data-view="history">履歴</button>
+    </nav>
+
+    <section id="formView" class="view">
+      <form id="brewForm" novalidate>
+        <input id="editingId" type="hidden">
+
+        <section class="card compactCard">
+          <label class="fieldLabel" for="brewDate">日付</label>
+          <input id="brewDate" class="textInput" type="date" required>
+        </section>
+
+        <section class="card">
+          <h2 class="sectionTitle"><img src="./assets/icon-bean.webp" alt="">豆の名前</h2>
+          <input id="beanName" class="textInput" type="text" maxlength="80" list="beanSuggestions" placeholder="例：エチオピア イルガチェフェ" autocomplete="off" required>
+          <datalist id="beanSuggestions"></datalist>
+        </section>
+
+        <section class="card">
+          <h2 class="sectionTitle"><img src="./assets/icon-roast.webp" alt="">焙煎度</h2>
+          <div class="choiceGrid four" data-choice="roast">
+            <button type="button" class="choice" data-value="浅煎り">浅煎り</button>
+            <button type="button" class="choice active" data-value="中煎り">中煎り</button>
+            <button type="button" class="choice" data-value="中深煎り">中深煎り</button>
+            <button type="button" class="choice" data-value="深煎り">深煎り</button>
+          </div>
+          <input id="roast" type="hidden" value="中煎り">
+        </section>
+
+        <section class="card">
+          <h2 class="sectionTitle"><img src="./assets/icon-scale.webp" alt="">豆量</h2>
+          <div class="choiceGrid four" data-choice="dose">
+            <button type="button" class="choice active" data-value="15">15g</button>
+            <button type="button" class="choice" data-value="20">20g</button>
+            <button type="button" class="choice" data-value="30">30g</button>
+            <button type="button" class="choice" data-value="other">その他</button>
+          </div>
+          <input id="dose" type="hidden" value="15">
+          <div id="customDoseWrap" class="subField hidden">
+            <label for="customDose">豆量を入力</label>
+            <div class="unitInput"><input id="customDose" type="number" min="1" max="100" step="0.5" inputmode="decimal"><span>g</span></div>
+          </div>
+        </section>
+
+        <section class="card splitCard">
+          <div class="stepperBlock">
+            <h2 class="sectionTitle"><img src="./assets/icon-temp.webp" alt="">湯温</h2>
+            <div class="stepper">
+              <button type="button" data-step="temp" data-dir="-1" aria-label="湯温を1度下げる">−</button>
+              <div><strong id="tempValue">88</strong><span>℃</span></div>
+              <button type="button" data-step="temp" data-dir="1" aria-label="湯温を1度上げる">＋</button>
+            </div>
+            <input id="temperature" type="hidden" value="88">
+            <p class="rangeNote">75〜98℃</p>
+          </div>
+          <div class="stepperBlock">
+            <h2 class="sectionTitle"><img src="./assets/icon-grinder.webp" alt="">挽き目</h2>
+            <div class="stepper">
+              <button type="button" data-step="grind" data-dir="-1" aria-label="クリック数を1減らす">−</button>
+              <div><strong id="grindValue">24</strong><span>クリック</span></div>
+              <button type="button" data-step="grind" data-dir="1" aria-label="クリック数を1増やす">＋</button>
+            </div>
+            <input id="grindClicks" type="hidden" value="24">
+            <p class="rangeNote">TIMEMORE 15〜31クリック</p>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2 class="sectionTitle"><img src="./assets/icon-dripper.webp" alt="">抽出方法</h2>
+          <div class="choiceGrid three" data-choice="method">
+            <button type="button" class="choice active" data-value="4:6">4:6</button>
+            <button type="button" class="choice" data-value="7投式">7投式</button>
+            <button type="button" class="choice" data-value="other">その他</button>
+          </div>
+          <input id="method" type="hidden" value="4:6">
+          <div id="customMethodWrap" class="subField hidden">
+            <label for="customMethod">抽出方法を入力</label>
+            <input id="customMethod" class="textInput" type="text" maxlength="50" placeholder="例：V60 3投式">
+          </div>
+        </section>
+
+        <section class="card tasteCard">
+          <h2 class="sectionTitle"><img src="./assets/icon-taste.webp" alt="">味の評価</h2>
+          <p class="helpText">それぞれ、いちばん近い強さを選択してください。</p>
+          <div id="tasteRows"></div>
+        </section>
+
+        <section class="card">
+          <h2 class="plainTitle">総合評価</h2>
+          <div class="starRating" id="overallRating" role="group" aria-label="総合評価5段階">
+            <button type="button" data-rating="1" aria-label="1">★</button>
+            <button type="button" data-rating="2" aria-label="2">★</button>
+            <button type="button" data-rating="3" aria-label="3">★</button>
+            <button type="button" data-rating="4" aria-label="4">★</button>
+            <button type="button" data-rating="5" aria-label="5">★</button>
+          </div>
+          <input id="rating" type="hidden" value="0">
+        </section>
+
+        <section class="card">
+          <label class="fieldLabel" for="memo">メモ</label>
+          <textarea id="memo" class="textInput memo" rows="4" maxlength="1000" placeholder="香り、飲み口、次回変えたい点など"></textarea>
+          <label class="wantAgain"><input id="wantAgain" type="checkbox"><span class="checkBox"></span><span>また飲みたい</span></label>
+        </section>
+
+        <div class="formActions">
+          <button id="cancelEdit" class="secondaryBtn hidden" type="button">編集をやめる</button>
+          <button class="saveBtn" type="submit"><span id="saveButtonLabel">記録を保存</span></button>
+        </div>
+      </form>
+    </section>
+
+    <section id="historyView" class="view hidden">
+      <section class="historyTools card">
+        <div class="historyHead">
+          <div><span class="historyCount" id="historyCount">0件</span><h2>抽出ログ</h2></div>
+        </div>
+        <div class="filterGrid">
+          <label>豆で絞り込み<select id="beanFilter"><option value="">すべての豆</option></select></label>
+          <label>並び順<select id="sortOrder"><option value="newest">新しい順</option><option value="oldest">古い順</option><option value="bean">豆名順</option></select></label>
+        </div>
+      </section>
+      <div id="logList" class="logList"></div>
+      <div id="emptyState" class="emptyState hidden"><strong>まだ記録がありません</strong><span>「記録する」から最初の一杯を保存してください。</span></div>
+    </section>
+
+    <footer class="brandFooter"><img src="./assets/brew-log-footer.webp" alt="ハンドドリップガイド Brew Log"></footer>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="./app.js"></script>
+</body>
+</html>
