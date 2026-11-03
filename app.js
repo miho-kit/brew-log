@@ -152,9 +152,11 @@ function displayDate(date){
 }
 function starString(n){return '★'.repeat(n)+'☆'.repeat(5-n)}
 function renderHistory(){
-  const bean=$('#beanFilter').value;const sort=$('#sortOrder').value;
+  const bean=$('#beanFilter').value;
+  const roast=$('#roastFilter').value;
+  const sort=$('#sortOrder').value;
   const wantAgainOnly=$('#wantAgainFilter').checked;
-  let records=state.records.filter(r=>(!bean||r.bean===bean)&&(!wantAgainOnly||r.wantAgain));
+  let records=state.records.filter(r=>(!bean||r.bean===bean)&&(!roast||r.roast===roast)&&(!wantAgainOnly||r.wantAgain));
   records=[...records].sort((a,b)=>{
     if(sort==='oldest')return a.date.localeCompare(b.date)||a.updatedAt-b.updatedAt;
     if(sort==='bean')return a.bean.localeCompare(b.bean,'ja')||b.date.localeCompare(a.date);
@@ -181,7 +183,9 @@ $('#tasteRows').addEventListener('click',e=>{const b=e.target.closest('.tasteCho
 $$('#overallRating button').forEach(b=>b.addEventListener('click',()=>setRating(Number(b.dataset.rating))));
 $('#brewForm').addEventListener('submit',saveRecord);
 $('#cancelEdit').addEventListener('click',()=>{resetForm();toast('編集をキャンセルしました')});
-$('#beanFilter').addEventListener('change',renderHistory);$('#sortOrder').addEventListener('change',renderHistory);
+$('#beanFilter').addEventListener('change',renderHistory);
+$('#roastFilter').addEventListener('change',renderHistory);
+$('#sortOrder').addEventListener('change',renderHistory);
 $('#wantAgainFilter').addEventListener('change',renderHistory);
 $('#logList').addEventListener('click',e=>{const edit=e.target.closest('[data-edit]');const del=e.target.closest('[data-delete]');if(edit)editRecord(edit.dataset.edit);if(del)deleteRecord(del.dataset.delete)});
 
