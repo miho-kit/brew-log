@@ -1,4 +1,4 @@
-const CACHE='brew-log-v10';
+const CACHE='brew-log-v11';
 const ASSETS=[
   './','./index.html','./styles.css','./app.js','./manifest.webmanifest',
   './assets/app-icon-192-v3.png','./assets/app-icon-512-v3.png',
