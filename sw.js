@@ -1,7 +1,7 @@
-const CACHE='brew-log-v2';
+const CACHE='brew-log-v3';
 const ASSETS=[
   './','./index.html','./styles.css','./app.js','./manifest.webmanifest',
-  './assets/app-icon-192-v2.png',
+  './assets/app-icon-192-v3.png','./assets/app-icon-512-v3.png',
   './assets/brew-log-footer.webp','./assets/icon-bean.webp','./assets/icon-roast.webp',
   './assets/icon-scale.webp','./assets/icon-temp.webp','./assets/icon-grinder.webp',
   './assets/icon-dripper.webp','./assets/icon-taste.webp'
