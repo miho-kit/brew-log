@@ -45,6 +45,7 @@ input[type=date]{min-width:0;max-width:100%;width:100%;-webkit-appearance:none;a
 .unitInput{display:flex;align-items:center;gap:7px}.unitInput input{width:110px;min-height:36px;border:1px solid var(--line);border-radius:10px;padding:6px 8px}.unitInput span{font-weight:700}
 
 .splitCard{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.splitCard .sectionTitle{min-height:25px}
 .stepperBlock+.stepperBlock{border-left:1px solid rgba(86,50,31,.10);padding-left:9px}
 .stepper{display:grid;grid-template-columns:34px minmax(0,1fr) 34px;align-items:center;gap:3px}
 .stepper button{width:34px;height:34px;border:1px solid var(--line);border-radius:10px;background:#fffaf4;color:var(--deep);font-size:20px}
