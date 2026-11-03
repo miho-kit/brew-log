@@ -153,7 +153,8 @@ function displayDate(date){
 function starString(n){return '★'.repeat(n)+'☆'.repeat(5-n)}
 function renderHistory(){
   const bean=$('#beanFilter').value;const sort=$('#sortOrder').value;
-  let records=state.records.filter(r=>!bean||r.bean===bean);
+  const wantAgainOnly=$('#wantAgainFilter').checked;
+  let records=state.records.filter(r=>(!bean||r.bean===bean)&&(!wantAgainOnly||r.wantAgain));
   records=[...records].sort((a,b)=>{
     if(sort==='oldest')return a.date.localeCompare(b.date)||a.updatedAt-b.updatedAt;
     if(sort==='bean')return a.bean.localeCompare(b.bean,'ja')||b.date.localeCompare(a.date);
@@ -161,6 +162,8 @@ function renderHistory(){
   });
   $('#historyCount').textContent=`${records.length}件`;
   $('#emptyState').classList.toggle('hidden',records.length!==0);
+  $('#emptyState strong').textContent=state.records.length?'条件に合う記録がありません':'まだ記録がありません';
+  $('#emptyState span').textContent=state.records.length?'絞り込み条件を変更してください。':'「記録する」から最初の一杯を保存してください。';
   $('#logList').innerHTML=records.map(r=>`
     <article class="logCard">
       <div class="logTop"><div><div class="logDate">${displayDate(r.date)}</div><h3 class="logBean">${escapeHtml(r.bean)}</h3>${r.wantAgain?'<span class="againBadge">また飲みたい</span>':''}</div><div class="logStars" aria-label="総合評価${r.rating}">${starString(r.rating)}</div></div>
@@ -179,6 +182,7 @@ $$('#overallRating button').forEach(b=>b.addEventListener('click',()=>setRating(
 $('#brewForm').addEventListener('submit',saveRecord);
 $('#cancelEdit').addEventListener('click',()=>{resetForm();toast('編集をキャンセルしました')});
 $('#beanFilter').addEventListener('change',renderHistory);$('#sortOrder').addEventListener('change',renderHistory);
+$('#wantAgainFilter').addEventListener('change',renderHistory);
 $('#logList').addEventListener('click',e=>{const edit=e.target.closest('[data-edit]');const del=e.target.closest('[data-delete]');if(edit)editRecord(edit.dataset.edit);if(del)deleteRecord(del.dataset.delete)});
 
 resetForm();refreshBeanControls();renderHistory();
