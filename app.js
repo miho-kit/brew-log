@@ -1,4 +1,5 @@
 const STORAGE_KEY='brewLogRecordsV1';
+const BACKUP_STORAGE_KEY='brewLogRecordsBackupV1';
 const tasteLevels=['弱い','やや弱い','ちょうど良い','やや強い','強い'];
 const tasteItems=[['sweetness','甘み'],['acidity','酸味'],['bitterness','苦味'],['aroma','香り']];
 const state={records:loadRecords(),taste:{sweetness:'ちょうど良い',acidity:'ちょうど良い',bitterness:'ちょうど良い',aroma:'ちょうど良い'}};
@@ -12,14 +13,27 @@ function localDateString(){
   const day=String(d.getDate()).padStart(2,'0');
   return `${y}-${m}-${day}`;
 }
-function loadRecords(){
+function readStoredRecords(key){
   try{
-    const data=JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');
-    return Array.isArray(data)?data:[];
-  }catch{return []}
+    const raw=localStorage.getItem(key);
+    if(raw===null)return null;
+    const data=JSON.parse(raw);
+    return Array.isArray(data)?data:null;
+  }catch{return null}
+}
+function loadRecords(){
+  const primary=readStoredRecords(STORAGE_KEY);
+  const backup=readStoredRecords(BACKUP_STORAGE_KEY);
+  const records=primary?.length?primary:backup?.length?backup:(primary||backup||[]);
+  if(records.length&&!primary?.length){
+    try{localStorage.setItem(STORAGE_KEY,JSON.stringify(records))}catch{}
+  }
+  return records;
 }
 function persist(){
-  localStorage.setItem(STORAGE_KEY,JSON.stringify(state.records));
+  const data=JSON.stringify(state.records);
+  localStorage.setItem(BACKUP_STORAGE_KEY,data);
+  localStorage.setItem(STORAGE_KEY,data);
 }
 function uid(){
   return crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random().toString(16).slice(2)}`;
