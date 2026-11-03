@@ -74,7 +74,7 @@ function actualMethod(){
 }
 function validate(){
   if(!$('#brewDate').value)return '日付を入力してください';
-  if(!$('#beanName').value.trim())return '豆の名前を入力してください';
+  if(!$('#beanName').value.trim())return '豆の種類を入力してください';
   if($('#dose').value==='other'&&(!actualDose()||actualDose()<=0))return '豆量を入力してください';
   if($('#method').value==='other'&&!actualMethod())return '抽出方法を入力してください';
   if(!Number($('#rating').value))return '総合評価を選択してください';
