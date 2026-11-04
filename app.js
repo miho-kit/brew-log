@@ -1,8 +1,9 @@
 const STORAGE_KEY='brewLogRecordsV1';
 const BACKUP_STORAGE_KEY='brewLogRecordsBackupV1';
+const HISTORY_PAGE_SIZE=20;
 const tasteLevels=['弱い','やや弱い','ちょうど良い','やや強い','強い'];
 const tasteItems=[['sweetness','甘み'],['acidity','酸味'],['bitterness','苦味'],['aroma','香り']];
-const state={records:loadRecords(),taste:{sweetness:'ちょうど良い',acidity:'ちょうど良い',bitterness:'ちょうど良い',aroma:'ちょうど良い'}};
+const state={records:loadRecords(),historyVisibleCount:HISTORY_PAGE_SIZE,taste:{sweetness:'ちょうど良い',acidity:'ちょうど良い',bitterness:'ちょうど良い',aroma:'ちょうど良い'}};
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 
@@ -120,6 +121,7 @@ function saveRecord(event){
   if(index>=0)state.records[index]=record;else state.records.push(record);
   persist();refreshBeanControls();
   toast(index>=0?'記録を更新しました':'記録を保存しました');
+  state.historyVisibleCount=HISTORY_PAGE_SIZE;
   resetForm();setView('history');
 }
 function editRecord(id){
@@ -151,6 +153,10 @@ function displayDate(date){
   const [y,m,d]=date.split('-');return `${y}.${Number(m)}.${Number(d)}`;
 }
 function starString(n){return '★'.repeat(n)+'☆'.repeat(5-n)}
+function resetHistoryLimit(){
+  state.historyVisibleCount=HISTORY_PAGE_SIZE;
+  renderHistory();
+}
 function renderHistory(){
   const bean=$('#beanFilter').value;
   const roast=$('#roastFilter').value;
@@ -162,11 +168,13 @@ function renderHistory(){
     if(sort==='bean')return a.bean.localeCompare(b.bean,'ja')||b.date.localeCompare(a.date);
     return b.date.localeCompare(a.date)||b.updatedAt-a.updatedAt;
   });
+  const visibleRecords=records.slice(0,state.historyVisibleCount);
   $('#historyCount').textContent=`${records.length}件`;
+  $('#loadMoreHistory').classList.toggle('hidden',visibleRecords.length>=records.length);
   $('#emptyState').classList.toggle('hidden',records.length!==0);
   $('#emptyState strong').textContent=state.records.length?'条件に合う記録がありません':'まだ記録がありません';
   $('#emptyState span').textContent=state.records.length?'絞り込み条件を変更してください。':'「記録する」から最初の一杯を保存してください。';
-  $('#logList').innerHTML=records.map(r=>`
+  $('#logList').innerHTML=visibleRecords.map(r=>`
     <article class="logCard">
       <div class="logTop"><div><div class="logDate">${displayDate(r.date)}</div><h3 class="logBean">${escapeHtml(r.bean)}</h3>${r.wantAgain?'<span class="againBadge">また飲みたい</span>':''}</div><div class="logStars" aria-label="総合評価${r.rating}">${starString(r.rating)}</div></div>
       <div class="logMeta"><span class="metaChip">${escapeHtml(r.roast)}</span><span class="metaChip">${r.dose}g</span><span class="metaChip">${r.temperature}℃</span><span class="metaChip">${r.grindClicks}クリック</span><span class="metaChip">${escapeHtml(r.method)}</span></div>
@@ -183,10 +191,11 @@ $('#tasteRows').addEventListener('click',e=>{const b=e.target.closest('.tasteCho
 $$('#overallRating button').forEach(b=>b.addEventListener('click',()=>setRating(Number(b.dataset.rating))));
 $('#brewForm').addEventListener('submit',saveRecord);
 $('#cancelEdit').addEventListener('click',()=>{resetForm();toast('編集をキャンセルしました')});
-$('#beanFilter').addEventListener('change',renderHistory);
-$('#roastFilter').addEventListener('change',renderHistory);
-$('#sortOrder').addEventListener('change',renderHistory);
-$('#wantAgainFilter').addEventListener('change',renderHistory);
+$('#beanFilter').addEventListener('change',resetHistoryLimit);
+$('#roastFilter').addEventListener('change',resetHistoryLimit);
+$('#sortOrder').addEventListener('change',resetHistoryLimit);
+$('#wantAgainFilter').addEventListener('change',resetHistoryLimit);
+$('#loadMoreHistory').addEventListener('click',()=>{state.historyVisibleCount+=HISTORY_PAGE_SIZE;renderHistory()});
 $('#logList').addEventListener('click',e=>{const edit=e.target.closest('[data-edit]');const del=e.target.closest('[data-delete]');if(edit)editRecord(edit.dataset.edit);if(del)deleteRecord(del.dataset.delete)});
 
 resetForm();refreshBeanControls();renderHistory();
