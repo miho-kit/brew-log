@@ -33,7 +33,7 @@ button{cursor:pointer;-webkit-tap-highlight-color:transparent}
 .textInput,select{display:block;width:100%;min-width:0;min-height:38px;border:1px solid var(--line);border-radius:11px;background:#fffdfa;color:var(--ink);padding:7px 10px;outline:none}
 input[type=date]{min-width:0;max-width:100%;width:100%;-webkit-appearance:none;appearance:none}
 .textInput:focus,select:focus{border-color:#8b6345;box-shadow:0 0 0 2px rgba(139,99,69,.09)}
-.choiceGrid{display:grid;gap:5px}.choiceGrid.four{grid-template-columns:repeat(4,1fr)}.choiceGrid.three{grid-template-columns:repeat(3,1fr)}
+.choiceGrid{display:grid;gap:5px}.choiceGrid.four{grid-template-columns:repeat(4,1fr)}.choiceGrid.three{grid-template-columns:repeat(3,1fr)}.choiceGrid.two{grid-template-columns:repeat(2,1fr)}
 .choice{position:relative;min-height:36px;padding:4px 5px;border:1px solid var(--line);border-radius:11px;background:#fffdfa;color:var(--ink);font-size:11.5px;font-weight:650}
 .choice.active{border-color:#8b6345;background:linear-gradient(180deg,#96704f,#825d40);color:#fff;box-shadow:0 3px 8px rgba(99,65,42,.11)}
 .subField{margin-top:6px;padding-top:6px;border-top:1px solid rgba(86,50,31,.07)}

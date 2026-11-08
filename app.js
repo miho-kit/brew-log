@@ -131,7 +131,7 @@ function editRecord(id){
   setChoice('roast',r.roast);
   if([15,20,30].includes(Number(r.dose))){setChoice('dose',String(r.dose));$('#customDose').value=''}else{setChoice('dose','other');$('#customDose').value=r.dose}
   setStepper('temp',r.temperature);setStepper('grind',r.grindClicks);
-  if(['4:6','7投式'].includes(r.method)){setChoice('method',r.method);$('#customMethod').value=''}else{setChoice('method','other');$('#customMethod').value=r.method}
+  if(['4:6','7投式','ニューハイブリッドメソッド'].includes(r.method)){setChoice('method',r.method);$('#customMethod').value=''}else{setChoice('method','other');$('#customMethod').value=r.method}
   state.taste={...state.taste,...r.taste};renderTasteRows();setRating(r.rating);
   $('#memo').value=r.memo||'';$('#wantAgain').checked=!!r.wantAgain;
   $('#saveButtonLabel').textContent='変更を保存';$('#cancelEdit').classList.remove('hidden');
