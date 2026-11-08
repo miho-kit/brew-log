@@ -1,9 +1,10 @@
 const STORAGE_KEY='brewLogRecordsV1';
 const BACKUP_STORAGE_KEY='brewLogRecordsBackupV1';
+const BEAN_NAMES_KEY='brewLogBeanNamesV1';
 const HISTORY_PAGE_SIZE=20;
 const tasteLevels=['弱い','やや弱い','ちょうど良い','やや強い','強い'];
 const tasteItems=[['sweetness','甘み'],['acidity','酸味'],['bitterness','苦味'],['aroma','香り']];
-const state={records:loadRecords(),historyVisibleCount:HISTORY_PAGE_SIZE,taste:{sweetness:'ちょうど良い',acidity:'ちょうど良い',bitterness:'ちょうど良い',aroma:'ちょうど良い'}};
+const state={records:loadRecords(),beanNames:loadBeanNames(),historyVisibleCount:HISTORY_PAGE_SIZE,taste:{sweetness:'ちょうど良い',acidity:'ちょうど良い',bitterness:'ちょうど良い',aroma:'ちょうど良い'}};
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 
@@ -21,6 +22,12 @@ function readStoredRecords(key){
     const data=JSON.parse(raw);
     return Array.isArray(data)?data:null;
   }catch{return null}
+}
+function loadBeanNames(){
+  try{
+    const data=JSON.parse(localStorage.getItem(BEAN_NAMES_KEY)||'[]');
+    return Array.isArray(data)?data.filter(name=>typeof name==='string'&&name.trim()):[];
+  }catch{return []}
 }
 function loadRecords(){
   const primary=readStoredRecords(STORAGE_KEY);
@@ -119,7 +126,7 @@ function saveRecord(event){
   };
   const index=state.records.findIndex(r=>r.id===id);
   if(index>=0)state.records[index]=record;else state.records.push(record);
-  persist();refreshBeanControls();
+  rememberBeanName(record.bean);persist();refreshBeanControls();
   toast(index>=0?'記録を更新しました':'記録を保存しました');
   state.historyVisibleCount=HISTORY_PAGE_SIZE;
   resetForm();setView('history');
@@ -141,9 +148,22 @@ function deleteRecord(id){
   if(!confirm(`「${r.bean}」の記録を削除しますか？`))return;
   state.records=state.records.filter(x=>x.id!==id);persist();refreshBeanControls();renderHistory();toast('記録を削除しました');
 }
-function uniqueBeans(){return [...new Set(state.records.map(r=>r.bean).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ja'))}
+function persistBeanNames(){
+  try{localStorage.setItem(BEAN_NAMES_KEY,JSON.stringify(state.beanNames))}catch{}
+}
+function rememberBeanName(name){
+  const clean=String(name||'').trim();
+  if(!clean)return;
+  state.beanNames=[clean,...state.beanNames.filter(item=>item!==clean)].slice(0,100);
+  persistBeanNames();
+}
+function uniqueBeans(){
+  return [...new Set([...state.beanNames,...state.records.map(record=>record.bean)].filter(Boolean))]
+    .sort((a,b)=>a.localeCompare(b,'ja'));
+}
 function hideBeanSuggestions(){
   $('#beanSuggestionList').classList.add('hidden');
+  $('#beanName').setAttribute('aria-expanded','false');
 }
 function renderBeanSuggestions(){
   const query=$('#beanName').value.trim().toLocaleLowerCase('ja-JP');
@@ -159,9 +179,12 @@ function renderBeanSuggestions(){
   if(!beans.length){hideBeanSuggestions();return}
   list.innerHTML=beans.map(bean=>`<button type="button" class="beanSuggestion" role="option" data-bean="${escapeHtml(bean)}">${escapeHtml(bean)}</button>`).join('');
   list.classList.remove('hidden');
+  $('#beanName').setAttribute('aria-expanded','true');
 }
 function refreshBeanControls(){
   const beans=uniqueBeans();
+  state.beanNames=beans.slice(0,100);
+  persistBeanNames();
   const current=$('#beanFilter').value;
   $('#beanFilter').innerHTML='<option value="">すべての豆</option>'+beans.map(b=>`<option value="${escapeHtml(b)}">${escapeHtml(b)}</option>`).join('');
   if(beans.includes(current))$('#beanFilter').value=current;

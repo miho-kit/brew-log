@@ -36,9 +36,9 @@
         </section>
 
         <section class="card">
-          <h2 class="sectionTitle"><img src="./assets/icon-bean.webp" alt="">豆の種類</h2>
+          <label class="sectionTitle" for="beanName"><img src="./assets/icon-bean.webp" alt="">豆の種類</label>
           <div class="beanInputWrap">
-            <input id="beanName" class="textInput" type="text" maxlength="80" placeholder="例：エチオピア イルガチェフェ" autocomplete="off" aria-autocomplete="list" aria-controls="beanSuggestionList" required>
+            <input id="beanName" name="brew-bean-search" class="textInput" type="search" maxlength="80" placeholder="例：エチオピア イルガチェフェ" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" enterkeyhint="next" role="combobox" aria-autocomplete="list" aria-haspopup="listbox" aria-expanded="false" aria-controls="beanSuggestionList" required>
             <div id="beanSuggestionList" class="beanSuggestionList hidden" role="listbox" aria-label="過去に入力した豆の候補"></div>
           </div>
         </section>
