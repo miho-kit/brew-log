@@ -37,8 +37,10 @@
 
         <section class="card">
           <h2 class="sectionTitle"><img src="./assets/icon-bean.webp" alt="">豆の種類</h2>
-          <input id="beanName" class="textInput" type="text" maxlength="80" list="beanSuggestions" placeholder="例：エチオピア イルガチェフェ" autocomplete="off" required>
-          <datalist id="beanSuggestions"></datalist>
+          <div class="beanInputWrap">
+            <input id="beanName" class="textInput" type="text" maxlength="80" placeholder="例：エチオピア イルガチェフェ" autocomplete="off" aria-autocomplete="list" aria-controls="beanSuggestionList" required>
+            <div id="beanSuggestionList" class="beanSuggestionList hidden" role="listbox" aria-label="過去に入力した豆の候補"></div>
+          </div>
         </section>
 
         <section class="card">

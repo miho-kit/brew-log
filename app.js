@@ -99,7 +99,7 @@ function resetForm(){
   $('#brewForm').reset();
   $('#editingId').value='';
   $('#brewDate').value=localDateString();
-  $('#beanName').value='';
+  $('#beanName').value='';hideBeanSuggestions();
   setChoice('roast','中煎り');setChoice('dose','15');setChoice('method','4:6');
   $('#customDose').value='';$('#customMethod').value='';
   setStepper('temp',88);setStepper('grind',24);setRating(0);
@@ -142,9 +142,26 @@ function deleteRecord(id){
   state.records=state.records.filter(x=>x.id!==id);persist();refreshBeanControls();renderHistory();toast('記録を削除しました');
 }
 function uniqueBeans(){return [...new Set(state.records.map(r=>r.bean).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ja'))}
+function hideBeanSuggestions(){
+  $('#beanSuggestionList').classList.add('hidden');
+}
+function renderBeanSuggestions(){
+  const query=$('#beanName').value.trim().toLocaleLowerCase('ja-JP');
+  const beans=uniqueBeans()
+    .filter(bean=>!query||bean.toLocaleLowerCase('ja-JP').includes(query))
+    .sort((a,b)=>{
+      const aStarts=query&&a.toLocaleLowerCase('ja-JP').startsWith(query);
+      const bStarts=query&&b.toLocaleLowerCase('ja-JP').startsWith(query);
+      return Number(bStarts)-Number(aStarts)||a.localeCompare(b,'ja');
+    })
+    .slice(0,6);
+  const list=$('#beanSuggestionList');
+  if(!beans.length){hideBeanSuggestions();return}
+  list.innerHTML=beans.map(bean=>`<button type="button" class="beanSuggestion" role="option" data-bean="${escapeHtml(bean)}">${escapeHtml(bean)}</button>`).join('');
+  list.classList.remove('hidden');
+}
 function refreshBeanControls(){
   const beans=uniqueBeans();
-  $('#beanSuggestions').innerHTML=beans.map(b=>`<option value="${escapeHtml(b)}"></option>`).join('');
   const current=$('#beanFilter').value;
   $('#beanFilter').innerHTML='<option value="">すべての豆</option>'+beans.map(b=>`<option value="${escapeHtml(b)}">${escapeHtml(b)}</option>`).join('');
   if(beans.includes(current))$('#beanFilter').value=current;
@@ -183,6 +200,20 @@ function renderHistory(){
       <div class="logActions"><button type="button" data-edit="${r.id}">編集</button><button type="button" class="delete" data-delete="${r.id}">削除</button></div>
     </article>`).join('');
 }
+
+$('#beanName').addEventListener('focus',renderBeanSuggestions);
+$('#beanName').addEventListener('input',renderBeanSuggestions);
+$('#beanName').addEventListener('keydown',event=>{if(event.key==='Escape')hideBeanSuggestions()});
+$('#beanSuggestionList').addEventListener('click',event=>{
+  const button=event.target.closest('.beanSuggestion');
+  if(!button)return;
+  $('#beanName').value=button.dataset.bean;
+  hideBeanSuggestions();
+  $('#beanName').focus();
+});
+document.addEventListener('click',event=>{
+  if(!event.target.closest('.beanInputWrap'))hideBeanSuggestions();
+});
 
 $$('.tab').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.view)));
 $$('[data-choice]').forEach(group=>group.addEventListener('click',e=>{const b=e.target.closest('.choice');if(b)setChoice(group.dataset.choice,b.dataset.value)}));
